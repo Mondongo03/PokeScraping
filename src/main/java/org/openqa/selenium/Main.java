@@ -1,20 +1,16 @@
 package org.openqa.selenium;
 
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
-
-import javax.lang.model.element.Element;
-import javax.lang.model.util.Elements;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import javax.xml.transform.TransformerException;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TransformerException {
         Scraper scraper = new Scraper();
+        //scraper.hurtarObjetos();
+        //Bolsa bolsa = scraper.getBolsa();
         scraper.hurtarPoke();
         Pokedex pokedex = scraper.getPokedex();
+        scraper.generarXmlPokemon();
+        //scraper.generarXmlObjetos();
 
-    }
-}
+            }
+        }
