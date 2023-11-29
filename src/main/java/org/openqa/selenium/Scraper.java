@@ -272,7 +272,7 @@ public class Scraper {
             sDef.appendChild(document.createTextNode(pokemon.getsDef()));
             pokes.appendChild(sDef);
 
-            Node vel = document.createElement("Defensa_Especial");
+            Node vel = document.createElement("Velocidad");
             vel.appendChild(document.createTextNode(pokemon.getVel()));
             pokes.appendChild(vel);
 
