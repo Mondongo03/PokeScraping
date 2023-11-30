@@ -1,5 +1,6 @@
 package org.openqa.selenium;
 
+import com.opencsv.*;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -9,22 +10,13 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.interactions.Actions;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
 
 import static java.lang.Thread.sleep;
 
@@ -168,15 +160,16 @@ public class Scraper {
         }
 
         for (int i = 0; i < nombres.size(); i++) {
-            driver.get("https://pokemon.fandom.com/es/wiki/"+nombres.get(i));
+
             try {
+                driver.get("https://pokemon.fandom.com/es/wiki/"+nombres.get(i));
                 sleep(1000);
             WebElement divElemento = driver.findElement(By.className("NN0_TB_DIsNmMHgJWgT7U"));
 
             divElemento.click();
                 }catch (Exception e){}
             try {
-                sleep(4000);
+                sleep(2000);
                 WebElement bloqueInfo = driver.findElement(By.tagName("aside"));
 
                 List<WebElement> div = bloqueInfo.findElements(By.className("pi-data-value"));
@@ -333,6 +326,26 @@ public class Scraper {
             StreamResult result = new StreamResult(new File("./Objeto.xml"));
             transformer.transform(source, result);
         }
+    }
+
+    public void generarCsvPokemon() throws IOException {
+        CSVWriter writer = new CSVWriter(new FileWriter("./Pokemon.csv"));
+        List<String[]> rows = new LinkedList<String[]>();
+        for (Pokemon pokemon : pokedex.pokedex) {
+                rows.add(new String[]{pokemon.getNombre(), pokemon.getNumPokedex(), pokemon.getTypePr(),pokemon.getTypeSc(),pokemon.getHabilidad(), pokemon.getHabilidadHidden(), pokemon.getHp(), pokemon.getAtq(), pokemon.getDef(),pokemon.getsAtq(),pokemon.getsDef(),pokemon.getVel()});
+            }
+        writer.writeAll(rows);
+        writer.close();
+        }
+
+    public void generarCsvObjeto() throws IOException {
+        CSVWriter writer = new CSVWriter(new FileWriter("./Objeto.csv"));
+        List<String[]> rows = new LinkedList<String[]>();
+        for (Objeto objeto : bolsa.bolsa) {
+            rows.add(new String[]{objeto.getNombre(), objeto.getGeneracion(), objeto.getPrecio_compra(), objeto.getPrecio_venta(), objeto.getTipo()});
+        }
+        writer.writeAll(rows);
+        writer.close();
     }
     public Pokedex getPokedex() {
         return this.pokedex;

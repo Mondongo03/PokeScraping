@@ -1,16 +1,18 @@
 package org.openqa.selenium;
 
 import javax.xml.transform.TransformerException;
+import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) throws TransformerException {
+    public static void main(String[] args) throws TransformerException, IOException {
         Scraper scraper = new Scraper();
-        //scraper.hurtarObjetos();
-        //Bolsa bolsa = scraper.getBolsa();
-        scraper.hurtarPoke();
-        Pokedex pokedex = scraper.getPokedex();
-        scraper.generarXmlPokemon();
+        scraper.hurtarObjetos();
+        Bolsa bolsa = scraper.getBolsa();
+        //scraper.hurtarPoke();
+        //Pokedex pokedex = scraper.getPokedex();
+        //scraper.generarXmlPokemon();
         //scraper.generarXmlObjetos();
-
+        //scraper.generarCsvPokemon();
+        scraper.generarCsvObjeto();
             }
         }
