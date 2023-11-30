@@ -26,6 +26,8 @@ public class Scraper {
 
     private Bolsa bolsa;
 
+    private Movedex movedex;
+
     public void hurtarPoke(){
         pokedex = new Pokedex();
         System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver");
@@ -199,6 +201,42 @@ public class Scraper {
 
     }
 
+    public  void hurtarMoves(){
+        movedex = new Movedex();
+        System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver");
+        FirefoxOptions options = new FirefoxOptions();
+
+        WebDriver driver = new FirefoxDriver(options);
+        driver.get("https://www.pokexperto.net/index2.php?seccion=nds/movimientos_pokemon");
+
+        List<WebElement> filas = driver.findElements(By.className("check3"));
+        String nombre;
+        String tipo;
+        String categoria;
+        String poder;
+        String pp;
+        String precision;
+        String descripcion;
+        Scanner scanner;
+        for (int i = 0; i < filas.size(); i++) {
+          List <WebElement> td = filas.get(i).findElements(By.tagName("td"));
+           nombre = td.get(0).findElement(By.tagName("a")).getText();
+           tipo = td.get(1).getAttribute("sorttable_customkey");
+           categoria = td.get(2).getAttribute("sorttable_customkey");
+           poder = String.valueOf(td.get(3).getText());
+           scanner = new Scanner(poder);
+            String poder2 = "";
+           try {
+               poder2 = String.valueOf(scanner.nextInt());
+           }catch (Exception e){}
+           pp = td.get(4).getText();
+           precision = td.get(5).getText();
+           descripcion = td.get(6).getText();
+           Movimiento movimiento = new Movimiento(nombre, tipo, categoria, poder2, pp, precision, descripcion);
+           movedex.movedex.add(i, movimiento);
+        }
+    }
+
     public void generarXmlPokemon() throws TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
@@ -328,6 +366,61 @@ public class Scraper {
         }
     }
 
+    public void generarXmlMovimientos() throws TransformerException {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = null;
+        try {
+            dBuilder = dbFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        Document document = dBuilder.newDocument();
+
+        Node rootNode = document.createElement("Movimientos");
+        document.appendChild(rootNode);
+
+        for (Movimiento movimiento : movedex.movedex) {
+            Node moves = document.createElement("Movimiento");
+            rootNode.appendChild(moves);
+
+            Node nombreMove = document.createElement("Nombre");
+            nombreMove.appendChild(document.createTextNode(movimiento.getNombre()));
+            moves.appendChild(nombreMove);
+
+            Node typeMove = document.createElement("Tipo");
+            typeMove.appendChild(document.createTextNode(movimiento.getTipo()));
+            moves.appendChild(typeMove);
+
+            Node catMove = document.createElement("Categoria");
+            catMove.appendChild(document.createTextNode(movimiento.getCategoria()));
+            moves.appendChild(catMove);
+
+            Node poderMove = document.createElement("Poder");
+            poderMove.appendChild(document.createTextNode(movimiento.getPoder()));
+            moves.appendChild(poderMove);
+
+            Node ppMove = document.createElement("PP");
+            ppMove.appendChild(document.createTextNode(movimiento.getPp()));
+            moves.appendChild(ppMove);
+
+            Node precisionMove = document.createElement("Precisión");
+            precisionMove.appendChild(document.createTextNode(movimiento.getPrecision()));
+            moves.appendChild(precisionMove);
+
+            Node descMove = document.createElement("Descripción");
+            descMove.appendChild(document.createTextNode(movimiento.getDescripcion()));
+            moves.appendChild(descMove);
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
+
+            DOMSource source = new DOMSource(document);
+            StreamResult result = new StreamResult(new File("./Movimiento.xml"));
+            transformer.transform(source, result);
+        }
+    }
+
     public void generarCsvPokemon() throws IOException {
         CSVWriter writer = new CSVWriter(new FileWriter("./Pokemon.csv"));
         List<String[]> rows = new LinkedList<String[]>();
@@ -343,6 +436,16 @@ public class Scraper {
         List<String[]> rows = new LinkedList<String[]>();
         for (Objeto objeto : bolsa.bolsa) {
             rows.add(new String[]{objeto.getNombre(), objeto.getGeneracion(), objeto.getPrecio_compra(), objeto.getPrecio_venta(), objeto.getTipo()});
+        }
+        writer.writeAll(rows);
+        writer.close();
+    }
+
+    public void generarCsvMovimiento() throws IOException {
+        CSVWriter writer = new CSVWriter(new FileWriter("./Movimiento.csv"));
+        List<String[]> rows = new LinkedList<String[]>();
+        for (Movimiento movimiento : movedex.movedex) {
+            rows.add(new String[]{movimiento.getNombre(), movimiento.getTipo(), movimiento.getCategoria(), movimiento.getPoder(), movimiento.getPp(), movimiento.getPrecision(), movimiento.getDescripcion()});
         }
         writer.writeAll(rows);
         writer.close();
