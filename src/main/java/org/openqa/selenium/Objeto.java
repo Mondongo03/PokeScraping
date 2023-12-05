@@ -1,5 +1,8 @@
 package org.openqa.selenium;
 
+/**
+ * Esta clase es para crear objetos de tipo objeto pokemon.
+ */
 public class Objeto {
         private String nombre;
         private String precio_compra;
@@ -8,6 +11,14 @@ public class Objeto {
 
         private String tipo;
 
+    /**
+     * Es el constructor de la clase
+     * @param nombre Nombre del objeto
+     * @param generacion Generación en la que salio
+     * @param precio_compra Precio al que se puede comprar, si es que se puede
+     * @param precio_venta Precio al que se vende, si es que se puede
+     * @param tipo Tipo de objeto
+     */
     public Objeto(String nombre, String generacion, String precio_compra, String precio_venta, String tipo) {
         this.nombre = nombre;
         this.generacion = generacion;

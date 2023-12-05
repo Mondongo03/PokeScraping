@@ -1,7 +1,9 @@
 package org.openqa.selenium;
 
 import java.util.ArrayList;
-
+/**
+ * Esta clase es para crear objetos de tipo pokemon.
+ */
 public class Pokemon {
     private String numPokedex;
     private String nombre;
@@ -15,6 +17,7 @@ public class Pokemon {
     private String sAtq;
     private String sDef;
     private String vel;
+
 
     public String getNumPokedex() {
         return numPokedex;
@@ -112,6 +115,21 @@ public class Pokemon {
         this.vel = vel;
     }
 
+    /**
+     * Es el constructor de la clase
+     * @param numPokedex Número de la pokedex del pokemon
+     * @param nombre Pombre del pokemon
+     * @param typePr El tipo primario
+     * @param typeSc El tipo secundario
+     * @param habilidad La habilidad
+     * @param habilidadHidden La habilidad oculta
+     * @param hp La vida base
+     * @param atq El ataque base
+     * @param def La defensa base
+     * @param sAtq El ataque especial base
+     * @param sDef La defensa especial base
+     * @param vel La velocidad base
+     */
     public Pokemon(String numPokedex, String nombre, String typePr, String typeSc, String habilidad, String habilidadHidden, String hp, String atq, String def, String sAtq, String sDef, String vel) {
         this.numPokedex = numPokedex;
         this.nombre = nombre;

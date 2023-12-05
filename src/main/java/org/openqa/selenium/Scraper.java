@@ -20,6 +20,9 @@ import java.util.*;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * La clase Scraper es donde ocurre toda la magia, aqui estan escritos los metodos que se utilizan en este proyecto
+ */
 public class Scraper {
 
     private Pokedex pokedex;
@@ -28,6 +31,10 @@ public class Scraper {
 
     private Movedex movedex;
 
+
+    /**
+     * El método hurtarPoke() para empezar hace una instancia de la clase pokedex para poder almacenar los pokemons, para así el driver obtener una URL donde buscará en una tabla de esa web el número de todos los pokemons y hará una list con eso para dentro de un bucle con el método get () del driver ir buscando una URL y autocompletándola con el número en cuestión del Pokémon y así dentro del propio bucle obtener los atributos necesarios del Pokémon para, por último, crear un objeto Pokémon con los datos y añadirlo a la arraylist pokedex
+     */
     public void hurtarPoke(){
         pokedex = new Pokedex();
         System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver");
@@ -135,6 +142,10 @@ public class Scraper {
 
     }
 
+
+    /**
+     * El método hurtarObjeto() para empezar hace una instancia de la clase bolsa para poder almacenar los objetos, para así el driver obtener una URL donde buscará en una tabla de esa web el nombre de todos los objetos y hará una list con eso para dentro de un bucle con el método get () del driver ir buscando una URL y autocompletándola con el nombre en cuestión del objeto y así dentro del propio bucle obtener los atributos necesarios del objeto para, por último, crear un objeto Objeto con los datos y añadirlo a la arraylist bolsa.
+     */
     public void hurtarObjetos(){
         bolsa = new Bolsa();
         System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver");
@@ -201,6 +212,10 @@ public class Scraper {
 
     }
 
+
+    /**
+     * El método hurtarMoves() para empezar hace una instancia de la clase movedex para poder almacenar los movimientos, para así el driver obtener una URL donde buscará en una tabla de esa web y todos los movimientos y todos los datos del mismo.
+     */
     public  void hurtarMoves(){
         movedex = new Movedex();
         System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver");
@@ -237,8 +252,13 @@ public class Scraper {
         }
     }
 
+    /**
+     *El método generarXmlPokemon() genera un xml usando la clase Document y DocumentBuilderFactory para crear el documento en memoria basándose en la arraylist pokedex bolsa que previamente hemos rellenado donde se usa un foreach para recorrer la arraylist y así obtener los datos de los pokemons objetos con los getters y también se usa el random y las otras 2 arraylist comentadas antes para que se les genere aleatoriamente 1 objeto y 4 movimientos, y al final con DOM creamos el fichero xml y con el transformer lo rellenamos .
+     * @throws TransformerException con esto y con los distintos try/catch capturamos las excepciones para que no pete.
+     */
     public void generarXmlPokemon() throws TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        Random random = new Random();
         DocumentBuilder dBuilder = null;
 
         try {
@@ -272,7 +292,7 @@ public class Scraper {
             pokes.appendChild(tipo1);
 
             Node tipo2 = document.createElement("Tipo2");
-            tipo2.appendChild(document.createTextNode(pokemon.getTypePr()));
+            tipo2.appendChild(document.createTextNode(pokemon.getTypeSc()));
             pokes.appendChild(tipo2);
 
             Node habilidad = document.createElement("Habilidad");
@@ -282,6 +302,10 @@ public class Scraper {
             Node habilidadHidden = document.createElement("Habilidad_Oculta");
             habilidadHidden.appendChild(document.createTextNode(pokemon.getHabilidadHidden()));
             pokes.appendChild(habilidadHidden);
+
+            Node objeto = document.createElement("Objeto_Equipado");
+            objeto.appendChild(document.createTextNode(bolsa.bolsa.get((int) (Math.random()* bolsa.bolsa.size())).getNombre()));
+            pokes.appendChild(objeto);
 
             Node hp = document.createElement("Hp");
             hp.appendChild(document.createTextNode(pokemon.getHp()));
@@ -307,6 +331,22 @@ public class Scraper {
             vel.appendChild(document.createTextNode(pokemon.getVel()));
             pokes.appendChild(vel);
 
+            Node mov1 = document.createElement("Movimiento1");
+            mov1.appendChild(document.createTextNode(movedex.movedex.get(random.nextInt(movedex.movedex.size()-1)).getNombre()));
+            pokes.appendChild(mov1);
+
+            Node mov2 = document.createElement("Movimiento2");
+            mov2.appendChild(document.createTextNode(movedex.movedex.get(random.nextInt(movedex.movedex.size()-1)).getNombre()));
+            pokes.appendChild(mov2);
+
+            Node mov3 = document.createElement("Movimiento3");
+            mov3.appendChild(document.createTextNode(movedex.movedex.get(random.nextInt(movedex.movedex.size()-1)).getNombre()));
+            pokes.appendChild(mov3);
+
+            Node mov4 = document.createElement("Movimiento4");
+            mov4.appendChild(document.createTextNode(movedex.movedex.get(random.nextInt(movedex.movedex.size()-1)).getNombre()));
+            pokes.appendChild(mov4);
+
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "yes");
@@ -317,6 +357,11 @@ public class Scraper {
         }
     }
 
+
+    /**
+     *El método generarXmlObjetos() genera un xml usando la clase Document y DocumentBuilderFactory para crear el documento en memoria basándose en la arraylist bolsa que previamente hemos rellenado donde se usa un foreach para recorrer la arraylist y así obtener los datos de los objetos con los getters, y al final con DOM creamos el fichero xml y con el transformer lo rellenamos.
+     * @throws TransformerException con esto y con los distintos try/catch capturamos las excepciones para que no pete.
+     */
     public void generarXmlObjetos() throws TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
@@ -366,6 +411,11 @@ public class Scraper {
         }
     }
 
+
+    /**
+     *El método generarXmlMovimientos() genera un xml usando la clase Document y DocumentBuilderFactory para crear el documento en memoria basándose en la arraylist movedex que previamente hemos rellenado donde se usa un foreach para recorrer la arraylist y así obtener los datos de los movimientos con los getters, y al final con DOM creamos el fichero xml y con el transformer lo rellenamos.
+     * @throws TransformerException con esto y con los distintos try/catch capturamos las excepciones para que no pete.
+     */
     public void generarXmlMovimientos() throws TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
@@ -421,16 +471,44 @@ public class Scraper {
         }
     }
 
+
+    /**
+     * El método generarCsvPokemon() genera un csv usando la clase CSVWriter para crear el documento csv y luego se crea una linkedlist de strings donde en un foreach de la arraylist pokedex se recorre entera para con los getters obtener todos los datos y en cada vuelta añadirlo con el método add de la linkedlist, por último con el método writeAll escribimos en el csv toda la arraylist
+     * @throws IOException con las exceptions evitamos que pete.
+     */
     public void generarCsvPokemon() throws IOException {
         CSVWriter writer = new CSVWriter(new FileWriter("./Pokemon.csv"));
         List<String[]> rows = new LinkedList<String[]>();
+        Random random = new Random();
         for (Pokemon pokemon : pokedex.pokedex) {
-                rows.add(new String[]{pokemon.getNombre(), pokemon.getNumPokedex(), pokemon.getTypePr(),pokemon.getTypeSc(),pokemon.getHabilidad(), pokemon.getHabilidadHidden(), pokemon.getHp(), pokemon.getAtq(), pokemon.getDef(),pokemon.getsAtq(),pokemon.getsDef(),pokemon.getVel()});
+                rows.add(new String[]{pokemon.getNombre(),
+                        pokemon.getNumPokedex(),
+                        pokemon.getTypePr(),
+                        pokemon.getTypeSc(),
+                        pokemon.getHabilidad(),
+                        pokemon.getHabilidadHidden(),
+                        bolsa.bolsa.get((int) (Math.random()* bolsa.bolsa.size())).getNombre(),
+                        pokemon.getHp(),
+                        pokemon.getAtq(),
+                        pokemon.getDef(),
+                        pokemon.getsAtq(),
+                        pokemon.getsDef(),
+                        pokemon.getVel(),
+                        movedex.movedex.get(random.nextInt(movedex.movedex.size()-1)).getNombre(),
+                        movedex.movedex.get(random.nextInt(movedex.movedex.size()-1)).getNombre(),
+                        movedex.movedex.get(random.nextInt(movedex.movedex.size()-1)).getNombre(),
+                        movedex.movedex.get(random.nextInt(movedex.movedex.size()-1)).getNombre()
+                });
             }
         writer.writeAll(rows);
         writer.close();
         }
 
+
+    /**
+     *El método generarCsvObjetos() genera un csv usando la clase CSVWriter para crear el documento csv y luego se crea una linkedlist de strings donde en un foreach de la arraylist bolsa se recorre entera para con los getters obtener todos los datos y en cada vuelta añadirlo con el método add de la linkedlist, por último con el método writeAll escribimos en el csv toda la arraylist.
+     * @throws IOException con las exceptions evitamos que pete.
+     */
     public void generarCsvObjeto() throws IOException {
         CSVWriter writer = new CSVWriter(new FileWriter("./Objeto.csv"));
         List<String[]> rows = new LinkedList<String[]>();
@@ -441,6 +519,11 @@ public class Scraper {
         writer.close();
     }
 
+
+    /**
+     * El método generarCsvMovimientos() genera un csv usando la clase CSVWriter para crear el documento csv y luego se crea una linkedlist de strings donde en un foreach de la arraylist movedexse recorre entera para con los getters obtener todos los datos y en cada vuelta añadirlo con el método add de la linkedlist.
+     * @throws IOException con las exceptions evitamos que pete.
+     */
     public void generarCsvMovimiento() throws IOException {
         CSVWriter writer = new CSVWriter(new FileWriter("./Movimiento.csv"));
         List<String[]> rows = new LinkedList<String[]>();
